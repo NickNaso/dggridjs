@@ -1,7 +1,8 @@
 var addon = require('bindings')('dggridjs');
-
-addon(function(msg){
-  console.log(msg); // 'hello world'
+// const myaddon = require('./addon');
+console.log(addon);
+addon.DGGSConstruct();
+addon.GeoToSeqnum(0,0,function(seqnumber){
+  console.log(seqnumber[0]); // 'hello world'
 });
 
-console.log(addon.hello())
