@@ -1,6 +1,6 @@
 {
   "name": "dggridjs",
-  "version": "0.0.0",
+  "version": "0.0.1-0",
   "description": "DGGRID wrapper for nodejs",
   "main": "addon.js",
   "private": false,
