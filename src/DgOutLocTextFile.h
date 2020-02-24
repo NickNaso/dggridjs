@@ -30,7 +30,7 @@ class DgOutLocTextFile : public DgOutputStream, public DgOutLocFile {
 
       // direct the DgOutLocFile abstract methods to the DgOutputStream ones
       virtual bool open (const string& fileName,
-                DgReportLevel failLevel = DgBase::Fatal)
+                DgReportLevel failLevel = DgBase::Fatal) 
               { return DgOutputStream::open(fileName, failLevel); }
 
       virtual void close (void) { DgOutputStream::close(); }
@@ -38,18 +38,18 @@ class DgOutLocTextFile : public DgOutputStream, public DgOutLocFile {
 
    protected:
 
-      DgOutLocTextFile (const string& fileName, const DgRFBase& rf,
+      DgOutLocTextFile (const string& fileName, const DgRFBase& rf, 
                         bool isPointFile = false,
-                        const string& suffix = string(""),
-			int precision = 7,
+                        const string& suffix = string(""), 
+			int precision = 7, 
                         DgReportLevel failLevel = DgBase::Fatal);
 
-      virtual void setFormatStr(void) {}
+      virtual void setFormatStr(void) = 0;
 
       std::string formatStr_;
 
    private:
-
+      
       int             precision_;
 };
 

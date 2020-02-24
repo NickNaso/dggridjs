@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [{
+       "type": "lldb",
+       "request": "launch",
+       "name": "Launch Program",
+       "preLaunchTask": "npm: build:dev",
+       "program": "D:/Program Files/nodejs/node.exe",
+       "args": [
+          "E:/Personal/Lab/nodejs/dggridjs/addon.js"
+       ]
+    }]
+  }

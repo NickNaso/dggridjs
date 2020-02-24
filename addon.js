@@ -1,8 +1,8 @@
-var addon = require('bindings')('dggridjs');
-// const myaddon = require('./addon');
-console.log(addon);
-addon.DGGSConstruct();
-addon.GeoToSeqnum(0,0,function(seqnumber){
-  console.log(seqnumber[0]); // 'hello world'
+var DGGSObject = require('bindings')('dggridjs');
+
+console.log(DGGSObject);
+DGGSObject.GeoToSeqnum(0,0,function(seqNumber){
+  console.log(seqNumber); // must return 10
 });
 
+// DGGSObject.DGGSConstruct("ISEA",30,"HEXAGON",0,0,0,0);

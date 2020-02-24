@@ -1,7 +1,6 @@
 #include <assert.h>
-#include <node_api.h>
+#include "napi.h"
 #include "src/dglib.h"
-#include "src/DgParams.h"
 
 
 
@@ -27,8 +26,6 @@ void dgconstruct(string projection = "ISEA", int aperture = 3,
                  double pole_lon_deg = 11.25, double pole_lat_deg = 58.28252559) {
 
     std::cout << "** executing DGGRID version " << DGGRID_VERSION << " **\n";
-    std::cout << "type sizes: big int: " << sizeof(long long int) * 8 << " bits / ";
-    std::cout << "big double: " << sizeof(long double) * 8 << " bits\n";
 
     dp.aperture = aperture;
     dp.azimuth_deg = azimuth_deg;
@@ -39,9 +36,37 @@ void dgconstruct(string projection = "ISEA", int aperture = 3,
     dp.res = res;
 
 }
-napi_value dggsConstruct(napi_env env, napi_callback_info info) {
-  dgconstruct();
-  return NULL;
+
+
+Napi::Value DGGSConstruct(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  if (info.Length() < 7) {
+    Napi::TypeError::New(env, "Wrong number of arguments")
+        .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+
+  // apearture. must be 3,4 or 7
+  if (!info[1].IsNumber() || !info[3].IsNumber() || !info[4].IsNumber() || !info[5].IsNumber() || !info[6].IsNumber()) {
+        throw Napi::Error::New(env, "Number expected for arg apearture, res, azimuth,pole lat and lon");
+  }
+
+  if(!info[0].IsString() || !info[2].IsString()){
+        throw Napi::Error::New(env, "String expected");
+  }
+
+  dgconstruct(info[0].As<Napi::String>(),
+    info[1].As<Napi::Number>().Int32Value(),
+    info[2].As<Napi::String>(),
+    info[3].As<Napi::Number>().DoubleValue(),
+    info[4].As<Napi::Number>().Int32Value(),
+    info[5].As<Napi::Number>().DoubleValue(),
+    info[6].As<Napi::Number>().DoubleValue()
+  );
+  Napi::Boolean state = Napi::Boolean::New(env, true);
+
+  return Napi::Boolean::New(env, true);
 }
 /*
  * Helper function to check if an item is in a vector or not
@@ -61,120 +86,47 @@ bool isvalid(napi_env env) {
     if (in_array(dp.topology, topologies)) {
         return true;
     } else {
-      napi_throw_error(env,0, "dgconstruct(): Topology must be set! call dgconstruct() first and configure DGGS parametes.");
-      // throw Napi::Error::New(env, "dgconstruct(): Topology must be set! call dgconstruct() first and configure DGGS parametes.");
-      // Error::New(env, "Example exception").ThrowAsJavaScriptException();
+       std::cout << "dgconstruct(): Topology must be set! call dgconstruct() first and configure DGGS parametes.";
     }
     return false;
 }
 
-// /*
-//  * Convert a lat/long point into a sequence number
-//  */
-// uint64_t geo_to_seq(double in_lon_deg, double in_lat_deg) {
-
-//     if (!isvalid()) {
-//         dgconstruct();
-//     }
-
-//     dglib::Transformer dgt(dp);
-
-//     auto in = dgt.inGEO(in_lon_deg, in_lat_deg);
-//     uint64_t out_seqnum;
-
-//     dgt.outSEQNUM(in, out_seqnum);
-//     return out_seqnum;
-
-// }
 
 
-napi_value GeoToSeqnum(napi_env env, const napi_callback_info info) {
-  napi_status status;
-  size_t argc = 1;
-  napi_value argv[1];
-
-
-
-  status = napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
-  assert(status == napi_ok);
-
-  napi_value cb = argv[2];
-
-
-
-    // if (!argv[0].IsNumber() || !argv[1].IsNumber() ){
-    //       napi_throw_error(env,0, "Number expected");
-    // } 
-
-
-
-    if (!isvalid(env)) {
-        dgconstruct();
+void GeoToSeqnum(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    if (!info[0].IsNumber() || !info[1].IsNumber()) {
+        throw Napi::Error::New(env, "Number expected");
     }
+    Napi::Function fn = info[2].As<Napi::Function>();
+    
+    double lon = info[0].As<Napi::Number>().DoubleValue();
+    double lat = info[1].As<Napi::Number>().DoubleValue();
 
-    dglib::DgParams dgp;
-    dgp.aperture=dp.aperture;
-    dgp.azimuth_deg = dp.azimuth_deg;
-    dgp.res = dp.res;
-    dgp.pole_lat_deg = dp.pole_lat_deg;
-    dgp.pole_lon_deg = dp.pole_lon_deg;
-    dgp.topology = dp.topology;
-    dgp.projection = dp.projection;
+    // if (!isvalid(env)) {
+    //     dgconstruct();
+    // }
 
-    dglib::Transformer dgt(dgp);
+    dglib::Transformer dgt( 58.28252559,11.25,0,3,10,"HEXAGON","ISEA");
 
-    double lon;
-    double lat;
-    status = napi_get_value_double(env,argv[0],&lon);
-    assert(status == napi_ok);
 
-    status = napi_get_value_double(env,argv[1],&lat);
-    assert(status == napi_ok);
-
+    std::cout << lon;
+    std::cout << lat;
     auto in = dgt.inGEO(lon, lat);
     uint64_t out_seqnum;
 
     dgt.outSEQNUM(in, out_seqnum);
-
-
-  napi_value seqnum[1];
-  status = napi_create_int64(env,out_seqnum,  seqnum);
-  assert(status == napi_ok);
-
-  napi_value global;
-  status = napi_get_global(env, &global);
-  assert(status == napi_ok);
-
-  napi_value result;
-  status = napi_call_function(env, global, cb, 1, seqnum, &result);
-  assert(status == napi_ok);
-
-  return nullptr;
-}
-
-
-
-
-
-napi_value Init(napi_env env, napi_value exports) {
-  napi_status status;
-
-  napi_value fn;
-  status = napi_create_function(env, NULL, 0, dggsConstruct, NULL, &fn);
-  if (status != napi_ok) return NULL;
-
-  status = napi_set_named_property(env, exports, "DGGSConstruct", fn);
-  if (status != napi_ok) return NULL;
-
- 
+    // std::cout << out_seqnum;
   
-  status = napi_create_function(
-      env, "", NAPI_AUTO_LENGTH, GeoToSeqnum, nullptr, &fn);
-  assert(status == napi_ok);
+    fn.Call(env.Global(),{ Napi::Number::New(env, out_seqnum) }); 
 
-  status = napi_set_named_property(env, exports, "GeoToSeqnum", fn);
- 
-   return exports;
 }
 
-NAPI_MODULE(NODE_GYP_MODULE_NAME, Init)
+
+Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    exports.Set(Napi::String::New(env, "GeoToSeqnum"), Napi::Function::New(env, GeoToSeqnum));
+    exports.Set(Napi::String::New(env, "DGGSConstruct"), Napi::Function::New(env, DGGSConstruct));
+    return exports;
+}
+
+NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init)

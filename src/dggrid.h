@@ -68,7 +68,7 @@ void doTable (MainParam& dp, DgGridPList& plist);
 ////////////////////////////////////////////////////////////////////////////////
 //// the parameter structures ////
 // no attempt to be subtle here; these contain the "global" parameters for
-// the specified dggrid operation
+// the specified dggrid operation 
 
 // common parameters
 
@@ -97,13 +97,13 @@ class MainParam {
       int numGrids;      // number of grids to generate
       int curGrid;       // grid counter
       bool lastGrid;                    // last grid?
-      DgGeoCoord vert0;                 // placement vert
+      DgGeoCoord vert0;                 // placement vert 
       long double azimuthDegs;               // orientation azimuth
       long double earthRadius;               // earth radius in km
       string datum;               // datum used to determine the earthRadius
       int precision;     // number of digits after decimal pt to output
       int verbosity;     // debugging info verbosity
-      bool megaVerbose;                 //
+      bool megaVerbose;                 // 
       bool useMother;                   // use Mother RNG?
       string metaOutFileNameBase;
       string metaOutFileName;
@@ -124,7 +124,7 @@ class MainParam {
 // grid generation parameter structure
 
 class GridGenParam : public MainParam {
-
+   
    public:
 
       GridGenParam (DgParamList& plist);
@@ -170,21 +170,21 @@ class GridGenParam : public MainParam {
       DgOutLocFile *cellOut, *ptOut, *randPtsOut;
       DgOutShapefile *cellOutShp, *ptOutShp;
 
-      bool concatPtOut;
-      char formatStr[50];
-      bool useEnumLbl;
-      std::uint64_t nCellsTested;
-      std::uint64_t nCellsAccepted;
-      std::uint64_t nCellsOutputToFile; // cells output to current file
+      bool concatPtOut;         
+      char formatStr[50];         
+      bool useEnumLbl;         
+      std::uint64_t nCellsTested; 
+      std::uint64_t nCellsAccepted;         
+      std::uint64_t nCellsOutputToFile; // cells output to current file 
       unsigned long int nOutputFile; // # of current output file
 
-      unsigned long int updateFreq; // how often to output updates
+      unsigned long int updateFreq; // how often to output updates         
       unsigned long int maxCellsPerFile; // max cells in a single output file
       long double geoDens;          // max arc length in radians
 
       bool buildShapeFileAttributes; // create fields for shapefile output
       bool buildClipFileAttributes;  // use clipping shape files (vs. others)
-
+     
       int shapefileDefaultInt;
       long double shapefileDefaultDouble;
       string shapefileDefaultString;
@@ -201,11 +201,11 @@ class GridGenParam : public MainParam {
 // bin point values parameter structure
 
 class BinValsParam : public MainParam {
-
+   
    public:
 
       BinValsParam (DgParamList& plist);
-
+     
       ~BinValsParam ();
 
       void dump (void);   // output to cout
@@ -229,7 +229,7 @@ class BinValsParam : public MainParam {
 // bin point presence parameter structure
 
 class BinPresenceParam : public MainParam {
-
+   
    public:
 
       BinPresenceParam (DgParamList& plist);
@@ -259,7 +259,7 @@ class BinPresenceParam : public MainParam {
 // transform addresses parameter structure
 
 class TransformParam : public MainParam {
-
+   
    public:
 
       TransformParam (DgParamList& plist);

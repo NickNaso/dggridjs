@@ -37,10 +37,10 @@ class DgOutLocFile : public DgBase {
 
       // factory method
       static DgOutLocFile* makeOutLocFile (const string& type,
-               const string& fileName, const DgRFBase& rf,
+               const string& fileName, const DgRFBase& rf, 
                bool isPointFile = false, int precision = 7,
                int shapefileIdLen = 11, const string& kmlColor = defaultKMLColor,
-               int kmlWidth = defaultKMLWidth,
+               int kmlWidth = defaultKMLWidth, 
                const string& kmlName = defaultKMLName, const string& kmlDesc = defaultKMLDescription,
                DgReportLevel failLevelIn = DgBase::Fatal);
 
@@ -48,7 +48,7 @@ class DgOutLocFile : public DgBase {
 
       DgReportLevel failLevel (void) { return failLevel_; }
 
-      virtual bool open (const string& fileName,
+      virtual bool open (const string& fileName, 
                 DgReportLevel failLevel = DgBase::Fatal) = 0;
 
       virtual void close (void) = 0;
@@ -57,28 +57,28 @@ class DgOutLocFile : public DgBase {
 
       bool isPointFile() const { return isPointFile_; }
 
-      void setIsPointFile(bool isPointFile = false)
+      void setIsPointFile(bool isPointFile = false) 
               { isPointFile_ = isPointFile; }
 
       virtual DgOutLocFile& insert (DgCell& cell);
       virtual DgOutLocFile& insert (DgLocList& list);
 
       // abstract virtual methods
-      virtual DgOutLocFile& insert (DgLocation& loc,
-                                const string* label = NULL){ return *this;}
+      virtual DgOutLocFile& insert (DgLocation& loc, 
+                                const string* label = NULL) = 0;
 
-      virtual DgOutLocFile& insert (DgLocVector& vec, const string* label = NULL,
-                                const DgLocation* cent = NULL){ return *this;}
+      virtual DgOutLocFile& insert (DgLocVector& vec, const string* label = NULL, 
+                                const DgLocation* cent = NULL) = 0;
 
-      virtual DgOutLocFile& insert (DgPolygon& poly, const string* label = NULL,
-                                const DgLocation* cent = NULL){ return *this;}
+      virtual DgOutLocFile& insert (DgPolygon& poly, const string* label = NULL, 
+                                const DgLocation* cent = NULL) = 0;
 
    protected:
 
-      DgOutLocFile (const string& fileName,
+      DgOutLocFile (const string& fileName, 
                const DgRFBase& rf, bool isPointFile = false,
                DgReportLevel failLevelIn = DgBase::Fatal)
-         : DgBase ("DgOutLocFile:" + fileName),
+         : DgBase ("DgOutLocFile:" + fileName), 
            rf_ (&rf), fileName_ (fileName), isPointFile_ (isPointFile),
            failLevel_ (failLevelIn)
             { /* subclass must perform open */ }
